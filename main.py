@@ -1,58 +1,60 @@
 # Higher or Lower
 
 import random  #type: ignore
+from replit import clear
+from art import logo, vs
 from game_data import data
-
-
-def generate_choice():
-  """generate data"""
-  a = random.choice(data)
-  b = random.choice(data)
-  if a == b:
-    while a == b:
-      b = random.choice(data)
-  return a, b
 
 def formatter(choice):
   """format generated data"""
   name = choice['name']
   desc = choice['description']
   country = choice['country']
-
   return f"{name}, a {desc}, from {country}"
 
 # Compare A vs B
 def compare(a, b, answer):
   a = a['follower_count']
   b = b['follower_count']
-  if answer == 'a':
-    return a > b
-  elif answer == 'b':
-    return b > a
+  if a > b:
+    return answer == 'a'
+  else:
+    return answer == 'b'
     
 def game():
+  print(logo)
   score = 0
+  a = random.choice(data)
+  b = random.choice(data)
   checker = False
-  select = generate_choice()
-  a = select[0]
-  b = select[1]
-  while True:
+  continue_game = True
+  while continue_game:
     if checker:
-      # B becomes A. New B appears
+      # B becomes A. New B appears after first round
       a = b
-      b = generate_choice()[1]
-      while a == b:
-        b = generate_choice()[1]
-      
+      b = random.choice(data)
+    while a == b:
+      b = random.choice(data)
+    
     print(f"Compare A: {formatter(a)}")
+    print(vs)
     print(f"Against B: {formatter(b)}")
     answer = input("Who has more followers? Type 'A' or 'B'. ").lower()
+  
+    clear()
+    
     checker = compare(a, b, answer)
     # If correct show score or add a point
     if checker:
       score += 1
+      print(f"Your current score is {score}.")
     else:
-      print(f"Your final score is {score}.")
-      break
-  
+      print(f"Final score is {score}.")
+      continue_game = False
+  # Restart game?
+  restart_game = input("Play again? 'y' or 'n': ").lower()
+  if restart_game == 'y':
+    clear()
+    game()
+
 game()
